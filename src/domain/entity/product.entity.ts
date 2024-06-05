@@ -16,9 +16,10 @@ export enum Category {
     public status: boolean;
     public stock: number;
     public category: Category;
+    public owner: string;
     public thumbnails?: [];
   
-    private constructor(id: string, title: string, description: string, code:string, price: number, status:boolean, stock: number, category: Category, thumbnails?:[]  ){
+    private constructor(id: string, title: string, description: string, code:string, price: number, status:boolean, stock: number, category: Category, owner:string, thumbnails?:[]  ){
       this.id = id
       this.category = category;
       this.title = title;
@@ -26,14 +27,15 @@ export enum Category {
       this.code = code;
       this.price = price;
       this.status = status;
+      this.owner = owner;
       this.stock = stock;
       this.thumbnails = thumbnails?thumbnails:[];
     }
   
     static fromObject (obj: {[key:string]:any}):ProductEntity{
   
-      const {id, title, description, code, price, status, stock, category, thumbnails} = obj
+      const {id, title, description, code, price, status, stock, category,owner, thumbnails} = obj
         
-        return new ProductEntity(id, title, description, code, price, status, stock, category, thumbnails)
+        return new ProductEntity(id, title, description, code, price, status, stock, category, owner, thumbnails)
     }
   }

@@ -50,8 +50,8 @@ export class Validators {
     }
     if (email === envs.EMAIL_ADMIN && password === envs.PASSWORD_ADMIN) {
       role = Role.admin;
-    } else {
-      role = Role.user;
+    } else { 
+     role = Role.user;
     }
 
     return {
@@ -73,6 +73,7 @@ export class Validators {
       status,
       stock,
       category,
+      owner,
       thumbnails,
     } = product;
 
@@ -91,6 +92,9 @@ export class Validators {
     if (typeof stock !== "number") throw new Error("stock value is invalid");
     if (!category) throw new Error("category is required");
     if (!(category in Category)) throw new Error("invalid category");
+    if (!owner) {
+      product.owner = 'admin'
+    }
 
     return {
       title,
@@ -100,6 +104,7 @@ export class Validators {
       status,
       stock,
       category,
+      owner,
       thumbnails,
     };
   }

@@ -1,7 +1,8 @@
 import { CartDatasource } from "../../../../domain/datasource";
 import { CreateTicket } from "../../../../domain/dtos";
 import { CartEntity, TicketEntity } from "../../../../domain/entity";
-import { cartModel, productModel } from "../models";
+import { CustomError } from "../../../../domain/error/custom-error";
+import { cartModel, productModel, ticketModel } from "../models";
 
 
 export class CartService implements CartDatasource{
@@ -14,22 +15,22 @@ export class CartService implements CartDatasource{
               products: cartCreated.products,
             });
           } catch (error) {
-            throw Error(`Internal error ${error}`);
+            throw CustomError.internalServer(`Internal error ${error}`);
           }
     }
     async getCartByid(id: string): Promise<CartEntity> {
         try {
             const cart = await cartModel.findById(id);
-            if (!cart) throw new Error(`No se encontro ningun Cart con el ID ${id}`);
+            if (!cart) throw CustomError.badRequest(`No se encontro ningun Cart con el ID ${id}`);
       
             const products = cart.products.map((item: any) => ({
               quantity: item.quantity,
-              product: typeof item.product === "object" ? item.product : null, // Comprobamos si product es un objeto antes de llamar a toObject()
+              product: typeof item.product === "object" ? item.product : null,
             }));
       
             return CartEntity.fromObject({ id: cart.id, products });
           } catch (error) {
-            throw new Error(`Error interno: ${error}`);
+            throw CustomError.internalServer(`Error interno: ${error}`);
           }
     }
     async addProductToCart(cid: string, pid: string): Promise<CartEntity> {
@@ -37,45 +38,41 @@ export class CartService implements CartDatasource{
             const cart = await cartModel.findById(cid);
             const product = await productModel.findById(pid);
       
-            if (!cart) throw new Error(`No se encontro ningun Cart con el ID ${cid}`);
+            if (!cart) throw CustomError.badRequest(`No se encontro ningun Cart con el ID ${cid}`);
             if (!product)
-              throw new Error(`No se encontro ningun Product con el ID ${pid}`);
+              throw CustomError.badRequest(`No se encontro ningun Product con el ID ${pid}`);
       
             let existingProductIndex = -1;
       
-            // Buscar si el producto ya está en el carrito
             cart.products.forEach((item, index) => {
               if (item.product && item.product.equals(product._id)) {
                 existingProductIndex = index;
               }
             });
             if (existingProductIndex !== -1) {
-              // Si el producto ya está en el carrito, aumentar la cantidad
               cart.products[existingProductIndex].quantity++;
             } else {
-              // Si el producto no está en el carrito, agregarlo
               const newProduct = {
-                product: product ? product._id : null, // Si product existe, usar su _id; de lo contrario, usar null
+                product: product ? product._id : null,
                 quantity: 1,
               };
               cart.products.push(newProduct);
             }
-            // Guardar el carrito actualizado en la base de datos
             const updatedCart = await cart.save();
       
             if (!updatedCart) {
-              throw new Error(`Error al actualizar el carrito`);
+              throw CustomError.internalServer(`Error al actualizar el carrito`);
             }
             const cartEntity = await cartModel.findById(updatedCart.id);
             if (!cartEntity) {
-              throw new Error(`Error al actualizar el carrito`);
+              throw CustomError.internalServer(`Error al actualizar el carrito`);
             }
             return CartEntity.fromObject({
               id: cartEntity.id,
               products: cartEntity.products,
             });
           } catch (error) {
-            throw new Error(`Error interno: ${error}`);
+            throw CustomError.internalServer(`Error interno: ${error}`);
           }
     }
     async deleteProductToCart(cid: string, pid: string): Promise<CartEntity> {
@@ -83,15 +80,15 @@ export class CartService implements CartDatasource{
             const cart = await cartModel.findById(cid);
             const product = await productModel.findById(pid);
       
-            if (!cart) throw new Error(`No se encontro ningun Cart con el ID ${cid}`);
+            if (!cart) throw CustomError.badRequest(`No se encontro ningun Cart con el ID ${cid}`);
             if (!product)
-              throw new Error(`No se encontro ningun Product con el ID ${pid}`);
+              throw CustomError.badRequest(`No se encontro ningun Product con el ID ${pid}`);
       
             const productDeleted = cart.products.some(
               (product) => product.product?._id.toString() === pid
             );
             if (!productDeleted)
-              throw Error(`El producto con id ${pid} no se encuentra en el carrito`);
+              throw CustomError.badRequest(`El producto con id ${pid} no se encuentra en el carrito`);
       
             const deleted = await cartModel.findByIdAndUpdate(
               { _id: cid },
@@ -99,25 +96,25 @@ export class CartService implements CartDatasource{
             );
       
             if (!deleted) {
-              throw new Error(`Error al eliminar el producto del carrito`);
+              throw CustomError.internalServer(`Error al eliminar el producto del carrito`);
             }
       
             const cartEntity = await cartModel.findById(cart.id);
             if (!cartEntity) {
-              throw new Error(`Error al actualizar el carrito`);
+              throw CustomError.internalServer(`Error al actualizar el carrito`);
             }
             return CartEntity.fromObject({
               id: cartEntity.id,
               products: cartEntity.products,
             });
           } catch (error) {
-            throw new Error(`Error interno: ${error}`);
+            throw CustomError.internalServer(`Error interno: ${error}`);
           }
     }
     async deleteAllProduct(id: string): Promise<CartEntity> {
         try {
             const cart = await cartModel.findById(id);
-            if (!cart) throw new Error(`No se encontro ningun Cart con el ID ${id}`);
+            if (!cart) throw CustomError.badRequest(`No se encontro ningun Cart con el ID ${id}`);
             while (cart.products.length !== 0) {
               cart.products.pop();
             }
@@ -128,7 +125,7 @@ export class CartService implements CartDatasource{
               products: cart.products,
             });
           } catch (error) {
-            throw new Error(`Error interno: ${error}`);
+            throw CustomError.internalServer(`Error interno: ${error}`);
           }
     }
     async updateCartQuantity(cid: string, pid: string, quantity: number): Promise<CartEntity> {
@@ -136,16 +133,16 @@ export class CartService implements CartDatasource{
             const cart = await cartModel.findById(cid);
             const product = await productModel.findById(pid);
       
-            if (!cart) throw new Error(`No se encontro ningun Cart con el ID ${cid}`);
+            if (!cart) throw CustomError.badRequest(`No se encontro ningun Cart con el ID ${cid}`);
             if (!product)
-              throw new Error(`No se encontro ningun Product con el ID ${pid}`);
+              throw CustomError.badRequest(`No se encontro ningun Product con el ID ${pid}`);
       
             const updatedCart = cart.products.find(
               (product) => product.product?._id.toString() === pid
             );
             
             if (!updatedCart)
-              throw new Error(`no se encontro producto con id${pid} en el carrito`);
+              throw CustomError.badRequest(`no se encontro producto con id${pid} en el carrito`);
       
             cart.products.forEach((product, index) => {
               if (cart.products[index].product?.id.toString() === pid) {
@@ -160,11 +157,24 @@ export class CartService implements CartDatasource{
               products: cart.products,
             });
           } catch (error) {
-            throw new Error(`Error interno: ${error}`);
+            throw CustomError.internalServer(`Error interno: ${error}`);
           }
     }
-    generateTicket(ticket: CreateTicket): Promise<TicketEntity> {
-        throw new Error("Method not implemented.");
+    async generateTicket(ticket: CreateTicket): Promise<TicketEntity> {
+      const { amount, code, purchase_datetime, purchaser } = ticket;
+
+
+      const newTicket = new ticketModel({
+        code,
+        purchaser,
+        purchase_datetime, 
+        amount
+      });
+  
+      const ticketSaved = await newTicket.save()
+  
+      return TicketEntity.fromObject(ticketSaved);
+    
     }
     
 }

@@ -1,4 +1,6 @@
 import express, { Router } from 'express'
+import cors from 'cookie-parser'
+import cookieParser  from 'cookie-parser'
 
 interface Options {
 
@@ -24,6 +26,14 @@ export class Server{
 
 
     start(){
+
+        this.app.use(express.json())
+        this.app.use(cookieParser())
+        this.app.use(express.urlencoded({extended:true}))
+        this.app.use(cookieParser())
+
+        this.app.use(express.static(this.public_path))
+        // this.app.use(cors())
 
         this.app.use(this.routes)
 

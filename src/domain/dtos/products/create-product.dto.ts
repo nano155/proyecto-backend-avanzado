@@ -12,6 +12,7 @@ export class CreateProductDto {
     public readonly status: boolean,
     public readonly stock: number,
     public readonly category: Category,
+    public readonly owner: string,
     public readonly thumbnails: [] = []
   ) {}
 
@@ -29,6 +30,7 @@ export class CreateProductDto {
         status,
         stock,
         category,
+        owner,
         thumbnails,
       } = productDto;
 
@@ -42,6 +44,7 @@ export class CreateProductDto {
           status,
           stock,
           category,
+          owner,
           thumbnails
         ),
       ];

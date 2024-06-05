@@ -1,5 +1,4 @@
 import { Validators } from "../../../config";
-import { Role } from "../../entity";
 
 export class RegisterUserDto {
   public first_name: string;
@@ -21,7 +20,7 @@ export class RegisterUserDto {
     this.email = email,
     this.age = age,
     this.password = password
-    this.role = role ? role:Role.user
+    this.role = role
   }
 
     static create(object:{[key:string]:any}):[string?, RegisterUserDto?]{

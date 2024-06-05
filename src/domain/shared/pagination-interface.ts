@@ -8,5 +8,5 @@ export interface PaginatedData{
     totalPages: number;
     prev: string | null;
     next: string | null;
-    products: Promise<ProductEntity[]>;
+    products: ProductEntity[];
   }

@@ -12,6 +12,7 @@ export class CreateTicket {
     public readonly purchaser: string
   ) {}
 
+ 
   static create(ticket:{[key:string]:any}):[string?, CreateTicket?] {
 
     try {
