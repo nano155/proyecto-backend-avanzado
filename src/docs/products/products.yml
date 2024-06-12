@@ -7,43 +7,73 @@ paths:
       responses:
         "200":
           description: La operacion fue exitosa se retorna un arreglo con los productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Products'
         "400":
-          description: Se envio un dato no esperado
+          description: Se envió un dato no esperado
         "500":
-          description: Error inesperado en el server.
+          description: Error inesperado en el servidor
+  /api/products/{id}:
+    get:
+      summary: Obtiene el usuario con el id disponible en la app.
+      tags:
+        - Products
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Id del usuario que desea solicitar
+        schema:
+          $type: string
+      responses:
+        "200":
+          description: La operacion fue exitosa se retorna un producto
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Products'
+        "400":
+          description: Se envió un dato no esperado
+        "500":
+          description: Error inesperado en el servidor
 
 components:
   schemas:
     Products:
       type: object
       properties:
-        _id:
-          type: ObjectId
-          description: Id autogenerado de MongoDB
-        title: 
-          type: String,
+        title:
+          type: string
           description: Nombre del producto
         description:
-          type: String
-          description: Descripcion o caracteristicas del producto
+          type: string
+          description: Descripción o características del producto
         code:
-          type: String
-          description: Codigo unico del producto
-        price: 
-          type: Number
+          type: string
+          description: Código único del producto
+        price:
+          type: number
           description: Valor de venta del producto
         status:
-          type: Boolean
-          description: Status del producto, si esta disponible o se dio de baja   
+          type: boolean
+          description: Estado del producto (disponible o no)
         stock:
-          type: Number
+          type: number
           description: Cantidad de productos disponibles
         owner:
-          type: String
+          type: string
           description: Usuario que dio de alta el producto
         category:
-          type: String,
-          description: 'computadoras, telefonos, televisores, accesorios, electrodomésticos'
+          type: string
+          description: Categoría del producto (computadoras, telefonos, etc.)
         thumbnails:
-          type: []
-          default: [] 
+          type: array
+          items:
+            type: string
+          default: []
