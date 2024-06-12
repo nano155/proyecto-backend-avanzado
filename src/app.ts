@@ -5,6 +5,7 @@ import { MongoConnect } from "./service/dao/mongo/mongo-connect";
 
 
 
+
 (()=>{
 
     main()
@@ -13,10 +14,24 @@ import { MongoConnect } from "./service/dao/mongo/mongo-connect";
 
 
 async function main(){
+  const swaggerOptions = {
+    definition:{
+        openapi:'3.0.1',
+        info:{
+            title:'Documentacion del poder',
+            description:'API pensada para clase de Swagger',
+            version:'1.0.0'
+        }
+    },
+    apis:[`./src/docs/**/*.yml`]
+}
+
+
     const server = new Server({
         port:envs.PORT,
         public_path:'public', 
-        routes:AppRoutes.routes
+        routes:AppRoutes.routes, 
+        swaggerOptions:swaggerOptions
     }) 
     
     try {

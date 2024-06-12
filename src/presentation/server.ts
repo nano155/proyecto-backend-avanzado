@@ -1,18 +1,23 @@
 import express, { Router } from 'express'
 import cors from 'cookie-parser'
 import cookieParser  from 'cookie-parser'
+import { SwaggerAdapter, SwaggerOptions } from '../config'
+
+
 
 interface Options {
 
     port:number,
     public_path:string,
-    routes:Router
+    routes:Router,
+    swaggerOptions:SwaggerOptions
 }
 export class Server{
     public readonly app = express()
     public readonly port;
     public readonly routes;
     public readonly public_path;
+    public readonly swaggerOptions;
 
 
     
@@ -20,13 +25,16 @@ export class Server{
        this.port = options.port;
        this.public_path = options.public_path;
        this.routes = options.routes;
+       this.swaggerOptions = options.swaggerOptions;
     }
 
 
 
 
     start(){
+        const {swaggerUiServe, swaggerUiSetup } = SwaggerAdapter.create(this.swaggerOptions)
 
+        this.app.use('/apidocs', swaggerUiServe, swaggerUiSetup)
         this.app.use(express.json())
         this.app.use(cookieParser())
         this.app.use(express.urlencoded({extended:true}))

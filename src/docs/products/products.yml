@@ -1,0 +1,49 @@
+paths:
+  /api/products:
+    get:
+      summary: Obtiene todos los productos disponibles en la aplicación.
+      tags:
+        - Products
+      responses:
+        "200":
+          description: La operacion fue exitosa se retorna un arreglo con los productos
+        "400":
+          description: Se envio un dato no esperado
+        "500":
+          description: Error inesperado en el server.
+
+components:
+  schemas:
+    Products:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado de MongoDB
+        title: 
+          type: String,
+          description: Nombre del producto
+        description:
+          type: String
+          description: Descripcion o caracteristicas del producto
+        code:
+          type: String
+          description: Codigo unico del producto
+        price: 
+          type: Number
+          description: Valor de venta del producto
+        status:
+          type: Boolean
+          description: Status del producto, si esta disponible o se dio de baja   
+        stock:
+          type: Number
+          description: Cantidad de productos disponibles
+        owner:
+          type: String
+          description: Usuario que dio de alta el producto
+        category:
+          type: String,
+          description: 'computadoras, telefonos, televisores, accesorios, electrodomésticos'
+        thumbnails:
+          type: []
+          default: [] 

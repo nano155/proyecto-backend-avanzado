@@ -90,7 +90,7 @@ export class UserService implements UserDatasource {
 
       await user.save();
 
-      await this.sendEmailValidationLink(user.email);
+      // await this.sendEmailValidationLink(user.email);
 
       const userEntity = UserEntity.fromObject({
         first_name: user.first_name,
