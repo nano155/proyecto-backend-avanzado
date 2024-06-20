@@ -31,6 +31,9 @@ export class UserRepositoryImpl implements UserRepository{
     registerUser(registerDto: RegisterUserDto): Promise<{ userEntity: UserEntity; token: any; }> {
         return this.userService.registerUser(registerDto)
     }
+    renewToken(token: string): Promise<{ ok: Boolean; message?: string; userEntity?: UserEntity; token?: any; }> {
+        return this.userService.renewToken(token)
+    }
  
 
 }

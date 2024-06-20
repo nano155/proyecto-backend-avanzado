@@ -6,7 +6,7 @@ import {
 } from "../../../../config";
 import { UserDatasource } from "../../../../domain/datasource";
 import { LoginUserDto, RegisterUserDto } from "../../../../domain/dtos";
-import { UserEntity, Role } from "../../../../domain/entity/user.entity";
+import { UserEntity, Role } from '../../../../domain/entity/user.entity';
 import { CustomError } from "../../../../domain/error/custom-error";
 import { userModel } from "../models";
 import { CartService } from "./cart.service";
@@ -33,6 +33,7 @@ export class UserService implements UserDatasource {
         first_name: userFind.first_name,
         last_name: userFind.last_name,
         email: userFind.email,
+        validateEmail: userFind.emailValidate,
         age: userFind.age,
         password: userFind.password,
         cart: userFind.cart._id.toString(),
@@ -90,7 +91,7 @@ export class UserService implements UserDatasource {
 
       await user.save();
 
-      // await this.sendEmailValidationLink(user.email);
+      await this.sendEmailValidationLink(user.email);
 
       const userEntity = UserEntity.fromObject({
         first_name: user.first_name,
@@ -236,6 +237,52 @@ export class UserService implements UserDatasource {
       findEmail.password = BcryptAdapter.hash(password);
       findEmail.save();
       return "Password change succesfull";
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      } else {
+        throw CustomError.internalServer(`${error}`);
+      }
+    }
+  }
+
+  async renewToken(
+    token: string
+  ): Promise<{ ok: Boolean; message?: string; userEntity?:UserEntity; token?:any}> {
+
+    try {
+      const payload = await JwtAdapter.validateToken(token);
+  
+      if (!payload) return { ok: false, message: "Token expired" };
+  
+      const { email } = (payload as { payload: { email: string } }).payload;
+
+      if (!email) return { ok: false, message: "Email dont exist in this token" };
+      const userFind = await userModel.findOne({email})
+      if (!userFind) throw CustomError.badRequest(`Don't exist this account in DB`);
+      
+
+      const userEntity = UserEntity.fromObject({
+        id: userFind._id,
+        first_name: userFind.first_name,
+        last_name: userFind.last_name,
+        email: userFind.email,
+        validateEmail: userFind.emailValidate,
+        age: userFind.age,
+        password: userFind.password,
+        cart: userFind.cart._id.toString(),
+        role: userFind.role,
+      });
+
+      const newToken = await JwtAdapter.generateToken(userEntity);
+      if (!newToken)
+        throw CustomError.internalServer("Problem with generation token!");
+
+      return {
+        ok:true,
+        userEntity,
+        token: newToken,
+      };
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;

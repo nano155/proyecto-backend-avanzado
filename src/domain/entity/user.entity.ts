@@ -9,6 +9,7 @@ export class UserEntity {
   public first_name: string;
   public last_name: string;
   public email: string;
+  public validateEmail: boolean;
   public cart: string;
   public role: Role;
   private constructor(
@@ -16,6 +17,7 @@ export class UserEntity {
     first_name: string,
     last_name: string,
     email: string,
+    validateEmail: boolean,
     cart: string,
     role: Role
   ) {
@@ -23,6 +25,7 @@ export class UserEntity {
     this.first_name = first_name;
     this.last_name = last_name;
     this.email = email;
+    this.validateEmail = validateEmail;
     this.cart = cart;
     this.role = role;
   }
@@ -30,8 +33,8 @@ export class UserEntity {
   static fromObject (object:{[key:string]:any}):UserEntity{
     console.log(object);
     
-    const {id, first_name, last_name, email, cart, role} = object
+    const {id, first_name, last_name, email, validateEmail, cart, role} = object
 
-    return new UserEntity(id, first_name, last_name, email, cart, role)
+    return new UserEntity(id, first_name, last_name, email, validateEmail, cart, role)
   }
 }

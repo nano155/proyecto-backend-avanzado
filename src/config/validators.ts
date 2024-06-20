@@ -19,13 +19,13 @@ export class Validators {
       throw new Error("first name is missing!");
     }
     if (typeof first_name !== "string") {
-      throw new Error("incorrect value!");
+      throw new Error("incorrect value in first name!");
     }
     if (!last_name) {
       throw new Error("last name is missing!");
     }
     if (typeof last_name !== "string") {
-      throw new Error("incorrect value!");
+      throw new Error("incorrect value in last name!");
     }
     if (!email) {
       throw new Error("email is missing!");
@@ -37,7 +37,7 @@ export class Validators {
       throw new Error("age is missing!");
     }
     if (typeof age !== "number") {
-      throw new Error("incorrect value!");
+      throw new Error("incorrect value in age!");
     }
     if (age < 10 || age > 90) {
       throw new Error("age must be greater than 10 or less than 90");

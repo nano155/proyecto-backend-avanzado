@@ -37,7 +37,6 @@ export class AuthController {
     this.userRepository
       .registerUser(registerUserDto!)
       .then((user) => {
-        res.cookie("token", user.token);
         return res.json(user);
       })
       .catch((error) => this.handleError(error, res));
@@ -98,4 +97,16 @@ export class AuthController {
       .then((user) => res.json(user))
       .catch((error) => this.handleError(error, res));
   };
+
+  public renewToken = (req:Request, res:Response) =>{
+    const {token} = req.cookies;
+    if (!token) return res.status(400).send("token dont received!");
+
+    this.userRepository.renewToken(token)
+    .then(user => {
+      res.cookie('token', user.token)
+      return res.status(200).json(user)
+    })
+    .catch(error => this.handleError(error, res))
+  }
 }
