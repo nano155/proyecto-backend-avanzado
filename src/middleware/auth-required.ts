@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { JwtAdapter, Validators } from "../config";
+import { MulterAdapter } from "../config/multer-adapter";
+import multer from 'multer'
 
 export interface AuthenticatedRequest extends Request {
     user?: ValidToken; // ValidToken es la interfaz que contiene el contenido del token JWT
@@ -21,6 +23,8 @@ interface ValidToken {
   }
 
 export class AuthRequired {
+
+  
 
   static authRequired = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
@@ -59,4 +63,22 @@ export class AuthRequired {
     
   }
 
-}
+  static uploadCloudinary = (req:Request, res:Response, next:NextFunction) => {
+    const upload = MulterAdapter.uploader().single('thumbnails');
+
+    upload(req, res, (err) =>{
+      if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          return res.status(400).json({ status: 'error', message: 'El tamaño del archivo excede el límite permitido' });
+        }
+        return res.status(400).json({ status: 'error', message: err.message });
+      } else if (err) { 
+        return res.status(500).json({ status: 'error', message: err.message });
+      }
+
+      next();
+    })
+    
+  }
+
+} 
