@@ -3,9 +3,7 @@ import { ProductReposotoryImpl } from "../../service/repository";
 import { ProductService } from "../../service/dao/mongo";
 import { ProductController } from "./controller";
 import { AuthRequired } from "../../middleware/auth-required";
-import { MulterAdapter } from "../../config/multer-adapter";
-import { cloudinary } from "../../config/cloudinary-config";
-import { UploadApiResponse } from "cloudinary";
+
 
 
 export class ProductRoutes{
@@ -13,7 +11,6 @@ export class ProductRoutes{
     static get routes(){
         const router = Router()
 
-        const upload = MulterAdapter.uploader();
         const productService = new ProductService()
         const productRepository = new ProductReposotoryImpl(productService)
         const productController = new ProductController(productRepository)

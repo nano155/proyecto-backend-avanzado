@@ -10,6 +10,10 @@ export class UserRepositoryImpl implements UserRepository{
     constructor(
         readonly userService:UserService
     ){}
+    loggoutUser(token: string): Promise<{ message: string; }> {
+        return this.userService.loggoutUser(token)
+    }
+    
     changeRoleToUser(id:string): Promise<UserEntity> {
         return this.userService.changeRoleToUser(id)
     }

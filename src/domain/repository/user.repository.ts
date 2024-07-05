@@ -11,5 +11,6 @@ export abstract class UserRepository{
     abstract sendChangePassword(email:string):Promise<any>
     abstract changePassword(password:string, email:string):Promise<string>
     abstract renewToken(token: string): Promise<{ ok: Boolean; message?: string; userEntity?:UserEntity; token?:any}>
+    abstract loggoutUser(token: string):Promise<{message:string}>
 
 }

@@ -52,10 +52,20 @@ export class AuthController {
   }
 
   public logout = (req: Request, res: Response) => {
-    res.cookie("token", "", {
-      expires: new Date(0),
-    });
-    res.sendStatus(200);
+    const {token} = req.cookies
+    if(!token) return res.status(400).send("token dont received!");
+    console.log('hola');
+    
+
+    this.userRepository.loggoutUser(token)
+    .then(user => {
+      res.cookie("token", "", {
+        expires: new Date(0),
+      });
+      return res.sendStatus(200)
+    }
+  )
+    .catch(error => this.handleError(error, res))  
   };
 
   public sendRecoverPassword = (req: Request, res: Response) => {

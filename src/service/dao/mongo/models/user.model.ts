@@ -37,8 +37,20 @@ const userSchema = new mongoose.Schema({
         type:String,
         enum:['admin', 'user', 'premium'],
         default: 'user'
+    },
+    documents:{
+        type:[
+            {
+                name:String,
+                reference:String
+            }
+        ],
+        default:[]
+    },
+    last_connection:{
+        type:Date,
+        default:null
     }
-
 })
 
 userSchema.pre('findOne', function() {

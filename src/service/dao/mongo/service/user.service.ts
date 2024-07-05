@@ -6,11 +6,23 @@ import {
 } from "../../../../config";
 import { UserDatasource } from "../../../../domain/datasource";
 import { LoginUserDto, RegisterUserDto } from "../../../../domain/dtos";
-import { UserEntity, Role } from '../../../../domain/entity/user.entity';
+import { UserEntity, Role } from "../../../../domain/entity/user.entity";
 import { CustomError } from "../../../../domain/error/custom-error";
 import { userModel } from "../models";
 import { CartService } from "./cart.service";
 import { EmailService } from "./email.service";
+
+interface JwtData {
+  payload:{
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    validateEmail: boolean;
+    cart: string;
+    role: string;
+  }
+}
 
 export class UserService implements UserDatasource {
   constructor(private readonly emailService: EmailService) {}
@@ -27,7 +39,7 @@ export class UserService implements UserDatasource {
       );
 
       if (!isMatch) throw CustomError.badRequest("Invalid credentials");
-      
+
       const userEntity = UserEntity.fromObject({
         id: userFind._id,
         first_name: userFind.first_name,
@@ -43,6 +55,9 @@ export class UserService implements UserDatasource {
       const token = await JwtAdapter.generateToken(userEntity);
       if (!token)
         throw CustomError.internalServer("Problem with generation token!");
+
+      userFind.last_connection = loginDto.connection;
+      await userFind.save();
 
       return {
         userEntity,
@@ -123,14 +138,17 @@ export class UserService implements UserDatasource {
       const userFind = await userModel.findById(id);
       if (!userFind) throw CustomError.badRequest("Not found user with id");
 
-      if(userFind.role === 'admin') throw CustomError.unauthorized('if user is admin, you dont change the role.')
-      if(userFind.role === 'user') {
-        userFind.role = 'premium'
-      }else{
-        userFind.role = 'user'
+      if (userFind.role === "admin")
+        throw CustomError.unauthorized(
+          "if user is admin, you dont change the role."
+        );
+      if (userFind.role === "user") {
+        userFind.role = "premium";
+      } else {
+        userFind.role = "user";
       }
 
-      await userFind.save()
+      await userFind.save();
 
       return UserEntity.fromObject(userFind);
     } catch (error) {
@@ -248,19 +266,24 @@ export class UserService implements UserDatasource {
 
   async renewToken(
     token: string
-  ): Promise<{ ok: Boolean; message?: string; userEntity?:UserEntity; token?:any}> {
-
+  ): Promise<{
+    ok: Boolean;
+    message?: string;
+    userEntity?: UserEntity;
+    token?: any;
+  }> {
     try {
       const payload = await JwtAdapter.validateToken(token);
-  
+
       if (!payload) return { ok: false, message: "Token expired" };
-  
+
       const { email } = (payload as { payload: { email: string } }).payload;
 
-      if (!email) return { ok: false, message: "Email dont exist in this token" };
-      const userFind = await userModel.findOne({email})
-      if (!userFind) throw CustomError.badRequest(`Don't exist this account in DB`);
-      
+      if (!email)
+        return { ok: false, message: "Email dont exist in this token" };
+      const userFind = await userModel.findOne({ email });
+      if (!userFind)
+        throw CustomError.badRequest(`Don't exist this account in DB`);
 
       const userEntity = UserEntity.fromObject({
         id: userFind._id,
@@ -279,9 +302,36 @@ export class UserService implements UserDatasource {
         throw CustomError.internalServer("Problem with generation token!");
 
       return {
-        ok:true,
+        ok: true,
         userEntity,
         token: newToken,
+      };
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      } else {
+        throw CustomError.internalServer(`${error}`);
+      }
+    }
+  }
+
+  async loggoutUser(token: string) {
+    const userToken: JwtData | null = await JwtAdapter.validateToken(token);
+    
+    if (!userToken) throw CustomError.unauthorized("The User isn't login.");
+    const { payload:{id} } = userToken;
+    
+    try {
+      
+      const userConnection =  await userModel.findById(id)
+      if(!userConnection) throw CustomError.notFound("We don't find user with id")
+      
+      userConnection.last_connection= new Date()
+  
+      await userConnection.save()
+  
+      return {
+        message: "Usuario desconectado.",
       };
     } catch (error) {
       if (error instanceof CustomError) {

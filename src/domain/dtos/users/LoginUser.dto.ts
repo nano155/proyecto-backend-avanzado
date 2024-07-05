@@ -3,8 +3,11 @@ import { regularExps } from "../../../config";
 export class LoginUserDto {
   public email: string;
   public password: string;
-  private constructor(email: string, password: string) {
-    (this.email = email), (this.password = password);
+  public connection: Date;
+  private constructor(email: string, password: string, connection: Date) {
+    this.email = email;
+    this.password = password;
+    this.connection = connection
   }
 
   static create(object: { [key: string]: any }): [string?, LoginUserDto?] {
@@ -14,7 +17,8 @@ export class LoginUserDto {
     if (!regularExps.email.test(email)) return ["email is not valid"];
     if (!password) return ["password is required"];
     if (password.length < 5) return ["password is too short"];
+    
 
-    return [undefined, new LoginUserDto(email, password)];
+    return [undefined, new LoginUserDto(email, password, new Date())];
   }
 }
