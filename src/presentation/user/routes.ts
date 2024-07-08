@@ -20,7 +20,9 @@ export class AuthRoutes{
 
         router.post('/login', userController.loginUser)
         router.post('/register', userController.registerUser)
-        router.post('/change-role/:id',[AuthRequired.mongoIdValidate],  userController.changeRole)
+        router.get('/get-users', userController.getUsers)
+        router.delete('/delete-users', userController.deteleUsers)
+        router.put('/change-role/:id',[AuthRequired.mongoIdValidate],  userController.changeRole)
         router.post('/send-recover', userController.sendRecoverPassword)
         router.get('/validate-email/:token',userController.validateUser)
         router.get('/validate-time/:token', userController.validateTimeToken)

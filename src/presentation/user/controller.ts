@@ -30,6 +30,18 @@ export class AuthController {
       .catch((error) => this.handleError(error, res));
   };
 
+  public getUsers = (req:Request, res:Response) =>{
+    this.userRepository.getUsers()
+    .then(users =>(res.json(users)))
+    .catch((error) => this.handleError(error, res));
+  }
+
+  public deteleUsers = (req:Request, res:Response)=>{
+    this.userRepository.deteletUsers()
+    .then(users => res.json(users))
+    .catch(error => this.handleError(error, res))
+  }
+
   public registerUser = (req: Request, res: Response) => {
     const [error, registerUserDto] = RegisterUserDto.create(req.body);
     if (error) return res.status(400).json({ error });

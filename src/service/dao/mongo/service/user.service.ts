@@ -5,7 +5,7 @@ import {
   Validators,
 } from "../../../../config";
 import { UserDatasource } from "../../../../domain/datasource";
-import { LoginUserDto, RegisterUserDto } from "../../../../domain/dtos";
+import { GetUserDto, LoginUserDto, RegisterUserDto } from "../../../../domain/dtos";
 import { UserEntity, Role } from "../../../../domain/entity/user.entity";
 import { CustomError } from "../../../../domain/error/custom-error";
 import { userModel } from "../models";
@@ -26,6 +26,64 @@ interface JwtData {
 
 export class UserService implements UserDatasource {
   constructor(private readonly emailService: EmailService) {}
+  async deteletUsers(): Promise<string> {
+    try {
+      const users = await userModel.find()
+      const diferencia = 172800000
+      const horaActual = new Date().getTime()
+      
+      const lastConnectionUsers = users.filter(user =>{
+        const horaCreated = new Date(user.createdAt).getTime()
+        if(user.last_connection === null){
+          if(horaActual - horaCreated >= diferencia){
+            return user
+          }
+          return
+        }
+        const horaConnection = new Date(user.last_connection).getTime()
+        if(horaActual - horaConnection >= diferencia){
+          return user
+        } 
+      })
+
+      for (const user of lastConnectionUsers) {
+        await userModel.deleteOne({_id:user._id})
+      }
+    
+      return `Usuarios eliminados ${lastConnectionUsers.length}`
+      
+    } catch (error) {
+       if (error instanceof CustomError) {
+        throw error;
+      } else {
+        throw CustomError.internalServer(`${error}`);
+      }
+    }
+  }
+  async getUsers(): Promise<GetUserDto[]> {
+    try {
+      const users = await userModel.find()
+      
+      if(users.length < 1) throw CustomError.notFound('Users is empty!')
+        return users.map(user =>{
+          const {first_name, last_name, email, role} = user
+          return GetUserDto.createUser(
+            {
+              name:`${first_name} ${last_name}`,
+              email,
+              rol:role       
+            }
+          )
+        })
+      
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      } else {
+        throw CustomError.internalServer(`${error}`);
+      }
+    }
+  }
   async loginUser(
     loginDto: LoginUserDto
   ): Promise<{ userEntity: UserEntity; token: any }> {

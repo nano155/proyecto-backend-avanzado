@@ -1,4 +1,4 @@
-import { LoginUserDto, RegisterUserDto } from "../../domain/dtos";
+import { GetUserDto, LoginUserDto, RegisterUserDto } from "../../domain/dtos";
 import { UserEntity } from "../../domain/entity/user.entity";
 import { UserRepository } from "../../domain/repository";
 import { UserService } from "../dao/mongo";
@@ -10,6 +10,12 @@ export class UserRepositoryImpl implements UserRepository{
     constructor(
         readonly userService:UserService
     ){}
+    getUsers(): Promise<GetUserDto[]> {
+        return this.userService.getUsers()
+    }
+    deteletUsers(): Promise<string> {
+        return this.userService.deteletUsers()
+    }
     loggoutUser(token: string): Promise<{ message: string; }> {
         return this.userService.loggoutUser(token)
     }

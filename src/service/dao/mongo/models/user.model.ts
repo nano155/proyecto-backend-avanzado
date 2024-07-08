@@ -1,3 +1,4 @@
+import { timeStamp } from "console";
 import mongoose from "mongoose";
 
 
@@ -51,6 +52,9 @@ const userSchema = new mongoose.Schema({
         type:Date,
         default:null
     }
+},
+{
+    timestamps:true
 })
 
 userSchema.pre('findOne', function() {

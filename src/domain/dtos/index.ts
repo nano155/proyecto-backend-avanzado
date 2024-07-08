@@ -1,4 +1,5 @@
 export * from './users/RegisterUser.dto'
+export * from './users/GetUser.dto'
 export * from './users/LoginUser.dto'
 export * from './products/create-product.dto'
 export * from './products/update-products.dto'
