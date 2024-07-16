@@ -1,3 +1,4 @@
+import { MulterAdapter } from "../../../../config/multer-adapter";
 import { ProductDatasource } from "../../../../domain/datasource";
 import {
   CreateProductDto,
@@ -10,6 +11,18 @@ import { PaginatedData } from "../../../../domain/shared/pagination-interface";
 import { productModel, userModel } from "../models";
 
 export class ProductService implements ProductDatasource {
+  async uploadImages(id: string, image: string[]): Promise<ProductEntity> {
+    try {
+      const product = await productModel.findById(id)
+      if(!product) throw CustomError.notFound("product doesn't exist!")     
+        product.thumbnails = image
+        const productUpdate = await product.save()
+
+        return ProductEntity.fromObject(productUpdate)
+    } catch (error) {
+      throw CustomError.internalServer(`Internal Server ${error}`)      
+    }
+  }
   async createProduct(productDto: CreateProductDto): Promise<ProductEntity> {
     const ProductsExist = await productModel.findOne({
       title: productDto.title,
@@ -93,6 +106,7 @@ export class ProductService implements ProductDatasource {
     id: string,
     updateProductDto: UpdateProductDto, uid:string
   ): Promise<ProductEntity> {
+    
     try {
       const findProduct = await productModel.findById(id);
       if (!findProduct) throw CustomError.badRequest("product dont exist!!");
@@ -101,18 +115,59 @@ export class ProductService implements ProductDatasource {
       if (findUser.role === "premium") {
         if(findUser.id === findProduct.owner){
           
-          const updateProduct = await productModel.findByIdAndUpdate(id, updateProductDto, {new:true});
+          const updateProduct = await productModel.findByIdAndUpdate(id, {
+            title:updateProductDto.titleUpdate,
+            description:updateProductDto.descriptionUpdate,
+            code:updateProductDto.codeUpdate,
+            price:updateProductDto.priceUpdate,
+            status:updateProductDto.statusUpdate,
+            stock:updateProductDto.stockUpdate,
+            category:updateProductDto.categoryUpdate,
+            thumbnails:updateProductDto.thumbnailsUpdate,
+          }, {new:true});
           if (!updateProduct)
             throw CustomError.badRequest(`No se encontro ningun producto con el ID ${id}`);
-    
+
+          if(updateProductDto.deletedFile !== undefined){
+            if(updateProductDto.deletedFile.length > 0){
+              updateProductDto.deletedFile.forEach(async img =>{
+                if(typeof img === 'string'){
+                  const parts = img.split('/products/')[1]
+                  const id = `products/${parts.split('.')[0]}`
+                  await MulterAdapter.delete(id)
+                }
+              })
+            }
+          }
           return ProductEntity.fromObject(updateProduct);
         }else{
           throw CustomError.unauthorized('Este usuario no puede actualizar este objeto, porque no fue creado por el!')
         }
       }
-      const updateProduct = await productModel.findByIdAndUpdate(id, updateProductDto, {new:true});
+      const updateProduct = await productModel.findByIdAndUpdate(id, {
+        title:updateProductDto.titleUpdate,
+        description:updateProductDto.descriptionUpdate,
+        code:updateProductDto.codeUpdate,
+        price:updateProductDto.priceUpdate,
+        status:updateProductDto.statusUpdate,
+        stock:updateProductDto.stockUpdate,
+        category:updateProductDto.categoryUpdate,
+        thumbnails:updateProductDto.thumbnailsUpdate,
+      }, {new:true});
       if (!updateProduct)
         throw CustomError.badRequest(`No se encontro ningun producto con el ID ${id}`);
+
+      if(updateProductDto.deletedFile !== undefined){
+        if(updateProductDto.deletedFile.length > 0){
+          updateProductDto.deletedFile.forEach(async img =>{
+            if(typeof img === 'string'){
+              const parts = img.split('/products/')[1]
+              const id = `products/${parts.split('.')[0]}`
+              await MulterAdapter.delete(id)
+            }
+          })
+        }
+      }
   
       return ProductEntity.fromObject(updateProduct);
     } catch (error) {
@@ -131,7 +186,16 @@ export class ProductService implements ProductDatasource {
           const deletedProduct = await productModel.findByIdAndDelete(id);
           if (!deletedProduct)
             throw CustomError.badRequest(`No se encontro ningun producto con el ID ${id}`);
-    
+
+          if(deletedProduct.thumbnails.length > 0){
+            deletedProduct.thumbnails.forEach(async (img) => {
+              if(typeof img === 'string'){
+                const parts = img.split('/products/')[1]
+                const id = `products/${parts.split('.')[0]}`
+                await MulterAdapter.delete(id)
+              }
+            })          
+          } 
           return ProductEntity.fromObject(deletedProduct);
         }else{
           throw CustomError.unauthorized('Este usuario no puede borrar este objeto, porque no fue creado por el!')
@@ -140,7 +204,15 @@ export class ProductService implements ProductDatasource {
       const deletedProduct = await productModel.findByIdAndDelete(id);
       if (!deletedProduct)
         throw CustomError.badRequest(`No se encontro ningun producto con el ID ${id}`);
-
+      if(deletedProduct.thumbnails.length > 0){        
+        deletedProduct.thumbnails.forEach(async (img) => {
+          if(typeof img === 'string'){
+            const parts = img.split('/products/')[1]
+            const id = `products/${parts.split('.')[0]}`
+            await MulterAdapter.delete(id)
+          }
+        })     
+      }
       return ProductEntity.fromObject(deletedProduct);
     } catch (error) {
       throw CustomError.internalServer(`Internal error ${error}`);

@@ -11,6 +11,9 @@ export class ProductReposotoryImpl implements ProductRepository{
     constructor(
         public readonly productService:ProductService
     ){}
+    uploadImages(id: string, image: string[]): Promise<ProductEntity> {
+        return this.productService.uploadImages(id, image)
+    }
     createProduct(productDto: CreateProductDto): Promise<ProductEntity> {
         return this.productService.createProduct(productDto)
     }

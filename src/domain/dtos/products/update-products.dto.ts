@@ -5,17 +5,18 @@ import { Category, ProductEntity } from "../../entity";
 
 export class UpdateProductDto {
   private constructor(
-    public readonly title?: string,
-    public readonly description?: string,
-    public readonly code?: string,
-    public readonly price?: number,
-    public readonly status?: boolean,
-    public readonly stock?: number,
-    public readonly category?: Category,
-    public readonly thumbnails?: [] 
+    public readonly titleUpdate?: string,
+    public readonly descriptionUpdate?: string,
+    public readonly codeUpdate?: string,
+    public readonly priceUpdate?: number,
+    public readonly statusUpdate?: boolean,
+    public readonly stockUpdate?: number,
+    public readonly categoryUpdate?: Category,
+    public readonly thumbnailsUpdate?: [],
+    public readonly deletedFile?: string[],
   ) {}
 
-  static create(productDto: ProductEntity): [string?, UpdateProductDto?] {
+  static create(productDto:{[key:string]:any}): [string?, UpdateProductDto?] {
    try {
     Validators.validatorUpdateProductDataType(productDto)
     const {
@@ -27,6 +28,7 @@ export class UpdateProductDto {
       stock,
       category,
       thumbnails,
+      deletedFile
     } = productDto;
     
     return [
@@ -39,7 +41,8 @@ export class UpdateProductDto {
         status,
         stock,
         category,
-        thumbnails
+        thumbnails,
+        deletedFile
       ),
     ];
    } catch (error) {

@@ -118,6 +118,7 @@ export class Validators {
       stock,
       category,
       thumbnails,
+      deletedFile
     } = product;
     if (title && typeof title !== "string")
       throw new Error("title value is invalid");
@@ -155,6 +156,7 @@ export class Validators {
       stock,
       category,
       thumbnails,
+      deletedFile
     };
   }
 

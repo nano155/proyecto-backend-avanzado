@@ -13,13 +13,14 @@ export class CreateProductDto {
     public readonly stock: number,
     public readonly category: Category,
     public readonly owner: string,
-    public readonly thumbnails: [] = []
+    public readonly thumbnails: string[] = []
   ) {}
 
   static create(productDto: {
     [key: string]: any;
   }): [string?, CreateProductDto?] {
     try {
+      
       Validators.validatorProductDataType(productDto)
 
       const {

@@ -5,7 +5,11 @@ import {
   Validators,
 } from "../../../../config";
 import { UserDatasource } from "../../../../domain/datasource";
-import { GetUserDto, LoginUserDto, RegisterUserDto } from "../../../../domain/dtos";
+import {
+  GetUserDto,
+  LoginUserDto,
+  RegisterUserDto,
+} from "../../../../domain/dtos";
 import { UserEntity, Role } from "../../../../domain/entity/user.entity";
 import { CustomError } from "../../../../domain/error/custom-error";
 import { userModel } from "../models";
@@ -13,7 +17,7 @@ import { CartService } from "./cart.service";
 import { EmailService } from "./email.service";
 
 interface JwtData {
-  payload:{
+  payload: {
     id: string;
     first_name: string;
     last_name: string;
@@ -21,39 +25,51 @@ interface JwtData {
     validateEmail: boolean;
     cart: string;
     role: string;
-  }
+  };
 }
 
 export class UserService implements UserDatasource {
   constructor(private readonly emailService: EmailService) {}
   async deteletUsers(): Promise<string> {
     try {
-      const users = await userModel.find()
-      const diferencia = 172800000
-      const horaActual = new Date().getTime()
-      
-      const lastConnectionUsers = users.filter(user =>{
-        const horaCreated = new Date(user.createdAt).getTime()
-        if(user.last_connection === null){
-          if(horaActual - horaCreated >= diferencia){
-            return user
-          }
-          return
+      const users = await userModel.find();
+      const diferencia = 172800000;
+      const horaActual = new Date().getTime();
+
+      const lastConnectionUsers = users.filter((user) => {
+        const horaCreated = new Date(user.createdAt).getTime();
+        if (user.last_connection === null) {
+          return horaActual - horaCreated >= diferencia;
         }
-        const horaConnection = new Date(user.last_connection).getTime()
-        if(horaActual - horaConnection >= diferencia){
-          return user
-        } 
-      })
+        const horaConnection = new Date(user.last_connection).getTime();
+        return horaActual - horaConnection >= diferencia;
+      });
+
+      const html = `
+      <h3>Eliminacion del correo!</h3>
+      <p> Su correo ha sido eliminado por inactividad! </p>
+      `;
+      const createOption = (email: string) => {
+        const options = {
+          to: email,
+          subject: "Usuario eliminado",
+          htmlBody: html,
+        };
+        return options;
+      };
 
       for (const user of lastConnectionUsers) {
-        await userModel.deleteOne({_id:user._id})
+        const deleteUser = await userModel.findByIdAndDelete(user._id);
+        if (!deleteUser)
+          throw CustomError.internalServer("Error al eliminar el usuario!");
+        const opciones = createOption(deleteUser.email);
+        const isSent = await this.emailService.sendEmail(opciones);
+        if (!isSent) throw CustomError.internalServer("Error sending email");
       }
-    
-      return `Usuarios eliminados ${lastConnectionUsers.length}`
-      
+
+      return `Usuarios eliminados ${lastConnectionUsers.length}`;
     } catch (error) {
-       if (error instanceof CustomError) {
+      if (error instanceof CustomError) {
         throw error;
       } else {
         throw CustomError.internalServer(`${error}`);
@@ -62,20 +78,17 @@ export class UserService implements UserDatasource {
   }
   async getUsers(): Promise<GetUserDto[]> {
     try {
-      const users = await userModel.find()
-      
-      if(users.length < 1) throw CustomError.notFound('Users is empty!')
-        return users.map(user =>{
-          const {first_name, last_name, email, role} = user
-          return GetUserDto.createUser(
-            {
-              name:`${first_name} ${last_name}`,
-              email,
-              rol:role       
-            }
-          )
-        })
-      
+      const users = await userModel.find();
+
+      if (users.length < 1) throw CustomError.notFound("Users is empty!");
+      return users.map((user) => {
+        const { first_name, last_name, email, role } = user;
+        return GetUserDto.createUser({
+          name: `${first_name} ${last_name}`,
+          email,
+          rol: role,
+        });
+      });
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;
@@ -322,9 +335,7 @@ export class UserService implements UserDatasource {
     }
   }
 
-  async renewToken(
-    token: string
-  ): Promise<{
+  async renewToken(token: string): Promise<{
     ok: Boolean;
     message?: string;
     userEntity?: UserEntity;
@@ -375,19 +386,21 @@ export class UserService implements UserDatasource {
 
   async loggoutUser(token: string) {
     const userToken: JwtData | null = await JwtAdapter.validateToken(token);
-    
+
     if (!userToken) throw CustomError.unauthorized("The User isn't login.");
-    const { payload:{id} } = userToken;
-    
+    const {
+      payload: { id },
+    } = userToken;
+
     try {
-      
-      const userConnection =  await userModel.findById(id)
-      if(!userConnection) throw CustomError.notFound("We don't find user with id")
-      
-      userConnection.last_connection= new Date()
-  
-      await userConnection.save()
-  
+      const userConnection = await userModel.findById(id);
+      if (!userConnection)
+        throw CustomError.notFound("We don't find user with id");
+
+      userConnection.last_connection = new Date();
+
+      await userConnection.save();
+
       return {
         message: "Usuario desconectado.",
       };

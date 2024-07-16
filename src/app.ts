@@ -33,6 +33,7 @@ async function main() {
           console.error('Error al conectar a MongoDB', error);
           return;
         }
+        
 
       server.start()
 
