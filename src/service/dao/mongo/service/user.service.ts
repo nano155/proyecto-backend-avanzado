@@ -30,7 +30,7 @@ interface JwtData {
 
 export class UserService implements UserDatasource {
   constructor(private readonly emailService: EmailService) {}
-  async deteletUsers(): Promise<string> {
+  async deteletUsers(): Promise<{id:string, email:string}[]> {
     try {
       const users = await userModel.find();
       const diferencia = 172800000;
@@ -67,7 +67,12 @@ export class UserService implements UserDatasource {
         if (!isSent) throw CustomError.internalServer("Error sending email");
       }
 
-      return `Usuarios eliminados ${lastConnectionUsers.length}`;
+      return lastConnectionUsers.map(user =>{
+        const {id, email} = user
+        return {
+          id,
+          email,
+      }});
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;
@@ -76,19 +81,26 @@ export class UserService implements UserDatasource {
       }
     }
   }
+
   async getUsers(): Promise<GetUserDto[]> {
     try {
       const users = await userModel.find();
 
       if (users.length < 1) throw CustomError.notFound("Users is empty!");
       return users.map((user) => {
-        const { first_name, last_name, email, role } = user;
+        const { first_name, last_name, email, role, id, last_connection, createdAt } = user;
+
+        const lastConnectionDate = last_connection === null ? new Date(createdAt) : new Date(last_connection);
+        
         return GetUserDto.createUser({
           name: `${first_name} ${last_name}`,
           email,
           rol: role,
+          id,
+          lastConnection: lastConnectionDate
         });
       });
+
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;
@@ -126,6 +138,10 @@ export class UserService implements UserDatasource {
       const token = await JwtAdapter.generateToken(userEntity);
       if (!token)
         throw CustomError.internalServer("Problem with generation token!");
+
+      if(userFind.emailValidate === false ){
+        await this.sendEmailValidationLink(userFind.email)
+      }
 
       userFind.last_connection = loginDto.connection;
       await userFind.save();

@@ -9,6 +9,9 @@ export class CartRepositoryImpl implements CartRepository{
     constructor(
         public readonly cartService:CartService
     ){}
+    getTicket(id: string): Promise<TicketEntity[] | []> {
+        return this.cartService.getTicket(id)
+    }
     createCart(): Promise<CartEntity> {
         return this.cartService.createCart()
     }

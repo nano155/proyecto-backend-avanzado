@@ -4,7 +4,7 @@ import { UserEntity } from '../entity';
 export abstract class UserDatasource{
 
     abstract getUsers():Promise<GetUserDto[]>
-    abstract deteletUsers():Promise<string>
+    abstract deteletUsers():Promise<{id:string, email:string}[]>
     abstract loginUser(loginDto:LoginUserDto):Promise<{userEntity:UserEntity; token:any}> 
     abstract registerUser(registerDto: RegisterUserDto):Promise<{userEntity:UserEntity; token:any}> 
     abstract changeRoleToUser(id:string):Promise<UserEntity>

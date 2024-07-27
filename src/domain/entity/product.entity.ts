@@ -3,9 +3,8 @@ export enum Category {
     telefonos = "telefonos",
     televisores = "televisores",
     accesorios = "accesorios",
-    electrodomésticos = "electrodomésticos",
+    electrodomesticos = "electrodomesticos",
   }
-  
   
   export class  ProductEntity {
     public id : string;

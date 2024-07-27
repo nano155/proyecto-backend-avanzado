@@ -86,7 +86,7 @@ export class Validators {
     if (typeof code !== "string") throw new Error("code value is invalid");
     if (!price) throw new Error("price is required");
     if (typeof price !== "number") throw new Error("price value is invalid");
-    if (!status) throw new Error("status is required");
+    if (status === null) throw new Error("status is required");
     if (typeof status !== "boolean") throw new Error("status value is invalid");
     if (!stock) throw new Error("stock is required");
     if (typeof stock !== "number") throw new Error("stock value is invalid");

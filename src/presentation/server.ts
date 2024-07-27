@@ -40,9 +40,9 @@ export class Server {
     );
 
     this.app.use("/apidocs", swaggerUiServe, swaggerUiSetup);
-    this.app.use(express.json());
+    this.app.use(express.json({ limit: '50mb' })); // Aumentar límite de carga útil
     this.app.use(cookieParser());
-    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.urlencoded({ extended: true, limit: '50mb' })); // Aumentar
     this.app.use(express.static(this.public_path));
   }
 

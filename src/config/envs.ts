@@ -15,4 +15,5 @@ export const envs = {
   CLOUDINARY_CLOUD_NAME: get("CLOUDINARY_CLOUD_NAME").required().asString(),
   CLOUDINARY_API_KEY: get("CLOUDINARY_API_KEY").required().asString(),
   CLOUDINARY_API_SECRET: get("CLOUDINARY_API_SECRET").required().asString(),
+  STRIPE_APP_SECRET_KEY:get("STRIPE_APP_SECRET_KEY").required().asString()
 };

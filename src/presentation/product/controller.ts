@@ -25,11 +25,16 @@ export class ProductController {
      req.files.forEach(img =>(thumb.push(img.path)))
     }  
     
+    console.log(req.body.status);
+    
     const precio= +req.body.price
-    const statusB = req.body.status === 'true'
+    const statusB = typeof req.body.status === 'boolean'
+    ? req.body.status
+    : req.body.status === 'true';
     const stockP = +req.body.stock
     const {price, status, stock, ...rest} = req.body
-
+    
+    console.log(statusB);
     const [error, createDto] = CreateProductDto.create({
       owner:userAuthorized.role === 'premium'?userAuthorized?.id:null, price:precio, status:statusB, stock:stockP,
        ...rest

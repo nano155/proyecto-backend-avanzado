@@ -21,6 +21,7 @@ export class CartRoutes{
         router.delete('/:id', cartController.deleteAllProduct)
         router.put('/:cid/products/:pid', cartController.updateCartQuantity)
         router.post('/:cid/purchase', cartController.generateTicket)
+        router.get('/tickets/:id', cartController.getTicket)
 
 
         return router

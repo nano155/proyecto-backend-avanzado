@@ -13,7 +13,7 @@ export class UserRepositoryImpl implements UserRepository{
     getUsers(): Promise<GetUserDto[]> {
         return this.userService.getUsers()
     }
-    deteletUsers(): Promise<string> {
+    deteletUsers(): Promise<{id:string, email:string}[]> {
         return this.userService.deteletUsers()
     }
     loggoutUser(token: string): Promise<{ message: string; }> {

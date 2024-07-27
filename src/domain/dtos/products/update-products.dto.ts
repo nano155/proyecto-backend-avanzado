@@ -12,7 +12,7 @@ export class UpdateProductDto {
     public readonly statusUpdate?: boolean,
     public readonly stockUpdate?: number,
     public readonly categoryUpdate?: Category,
-    public readonly thumbnailsUpdate?: [],
+    public readonly thumbnailsUpdate?: string[],
     public readonly deletedFile?: string[],
   ) {}
 

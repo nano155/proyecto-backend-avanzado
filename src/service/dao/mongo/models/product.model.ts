@@ -40,7 +40,7 @@ export const productSchema = new mongoose.Schema({
             'telefonos',
             'televisores',
             'accesorios',
-            'electrodomésticos'
+            'electrodomesticos'
         ],
         required: true,
         index: true

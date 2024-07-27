@@ -56,6 +56,7 @@ export class AuthController {
 
   public changeRole = (req:Request, res:Response) =>{
     const id = req.params.id
+    
     if(!id) return res.status(400).send("id dont received!");
 
     this.userRepository.changeRoleToUser(id)
@@ -65,9 +66,7 @@ export class AuthController {
 
   public logout = (req: Request, res: Response) => {
     const {token} = req.cookies
-    if(!token) return res.status(400).send("token dont received!");
-    console.log('hola');
-    
+    if(!token) return res.status(400).send("token dont received!");    
 
     this.userRepository.loggoutUser(token)
     .then(user => {
