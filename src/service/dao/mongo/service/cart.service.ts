@@ -211,8 +211,16 @@ export class CartService implements CartDatasource {
     }
   }
   
-  async generateTicket(ticket: CreateTicket): Promise<TicketEntity> {
+  async generateTicket(ticket: CreateTicket): Promise<TicketEntity> {    
     const { amount, code, purchase_datetime, purchaser } = ticket;
+    const oldTicket = await ticketModel.find({purchaser})
+
+    if(oldTicket && oldTicket.length >0) {
+      await Promise.all(
+        oldTicket.map(async ticket => await ticket.deleteOne())
+      )
+    }
+    
     try {
       const newTicket = new ticketModel({
         code,
@@ -221,28 +229,25 @@ export class CartService implements CartDatasource {
         amount,
       });
       const ticketSaved = await newTicket.save();
-
       return TicketEntity.fromObject(ticketSaved);
     } catch (error) {
       throw CustomError.internalServer(`Error interno: ${error}`);
     }
   }
 
-  async getTicket(id: string): Promise<TicketEntity[] | []> {
+  async getTicket(id: string): Promise<TicketEntity> {
     try {
       const user = await userModel.findById(id);
 
       if (!user) throw CustomError.notFound("User by id not found");
 
       const findTickets = await ticketModel.find({ purchaser: user.email });
+      
+      if(!findTickets){
+        throw CustomError.notFound("tickets not found");
+      }
 
-      if (findTickets.length === 0) return [];
-
-      const userTickets = findTickets.map((ticket) =>
-        TicketEntity.fromObject(ticket)
-      );
-
-      return userTickets;
+      return TicketEntity.fromObject(findTickets[0]);
     } catch (error) {
       throw CustomError.internalServer(`Error retrieving tickets`);
     }

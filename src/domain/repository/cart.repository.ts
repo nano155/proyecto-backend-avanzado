@@ -11,6 +11,6 @@ export abstract class CartRepository {
     abstract deleteAllProduct(id:string):Promise<CartEntity>
     abstract updateCartQuantity(cid:string, pid:string, quantity:number):Promise<CartEntity>
     abstract generateTicket(ticket:CreateTicket):Promise<TicketEntity>
-    abstract getTicket(id:string):Promise<TicketEntity[] | []>
+    abstract getTicket(id:string):Promise<TicketEntity>
 
 }

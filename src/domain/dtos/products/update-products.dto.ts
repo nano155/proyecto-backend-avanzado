@@ -18,6 +18,7 @@ export class UpdateProductDto {
 
   static create(productDto:{[key:string]:any}): [string?, UpdateProductDto?] {
    try {
+    
     Validators.validatorUpdateProductDataType(productDto)
     const {
       title,

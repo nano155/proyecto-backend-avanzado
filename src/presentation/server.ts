@@ -47,13 +47,11 @@ export class Server {
   }
 
   private configureRoutes() {
-
-    this.app.get("/", (req, res) => {
-      res.sendFile(path.join(__dirname, "../public/index.html"));
-    });
-
-
     this.app.use(this.routes);
+
+    this.app.get('*', (req, res) => {
+      res.sendFile(path.join(this.public_path, 'index.html'));
+    });
   }
 
   start() {

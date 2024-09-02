@@ -54,7 +54,8 @@ export class CartController {
     if (!cid) return res.status(400).send("Id from cart don't received.");
     const pid = req.params.pid;
     if (!pid) return res.status(400).send("Id from product don't received.");
-
+    
+    
     if (cartUser?.role === Role.user && cartUser.cart === cid) {
       return this.cartRepository
         .addProductToCart(cid, pid)
@@ -111,8 +112,6 @@ export class CartController {
       .getCartByid(cid)
       .then(async (cart: any) => {
         let totalPrice = 0; // Inicializar el precio total
-        console.log(cart);
-
         const newCart = cart.products
           .map((productInfo: ProductInfo) => {
 

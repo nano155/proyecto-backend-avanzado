@@ -51,7 +51,11 @@ const userSchema = new mongoose.Schema({
     last_connection:{
         type:Date,
         default:null
-    }
+    },
+    payment_intentId:{
+        type:String,
+        default:null
+    },
 },
 {
     timestamps:true

@@ -1,3 +1,4 @@
+import path from "path";
 import { envs } from "./config/envs";
 import { AppRoutes } from "./presentation/routes";
 import { Server } from "./presentation/server";
@@ -22,7 +23,7 @@ async function main() {
 
       const server = new Server({
           port:envs.PORT,
-          public_path:'public',
+          public_path:path.join(__dirname, "../public"),
           routes:AppRoutes.routes,
           swaggerOptions:swaggerOptions
       })

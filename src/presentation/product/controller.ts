@@ -112,7 +112,14 @@ export class ProductController {
     if (userAuthorized?.role !== Role.admin && userAuthorized?.role !== Role.premium)
       return res.status(401).json({ message: "Unauthorized operation" });
 
-    const [error, updateProduct] = UpdateProductDto.create(req.body);
+    console.log(req.body);
+    
+
+    const {stock, price, ...rest} = req.body
+
+    
+
+    const [error, updateProduct] = UpdateProductDto.create({stock:+stock, price:+price, ...rest});
     if (error) return res.status(400).json({ error: error });
 
     
