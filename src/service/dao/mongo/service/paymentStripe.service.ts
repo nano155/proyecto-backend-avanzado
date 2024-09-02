@@ -3,6 +3,7 @@ import { PaymentStripe } from "../../../../domain/datasource";
 import { CustomError } from "../../../../domain/error/custom-error";
 import { cartModel, ticketModel, userModel } from "../models";
 import { envs } from "../../../../config";
+import mongoose from "mongoose";
 
 interface Ticket {
     amount: number,
@@ -94,8 +95,8 @@ async completedPayment(userId: string, ticket: string):Promise<any>{
       cart.products.splice(0, cart.products.length)
       await cart.save();
     
-      await userModel.findByIdAndUpdate(userId,{payment_intentId:null})
-      await ticketModel.findOneAndDelete({id:ticket})
+      await userModel.findByIdAndUpdate(userId,{payment_intentId:null})   
+      await ticketModel.findOneAndDelete({_id:ticket})
   } catch (error) {
     if(error instanceof Error){
       throw CustomError.internalServer(`Failed to cancel PaymentIntent: ${error.message}`);
