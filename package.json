@@ -10,6 +10,9 @@
   },
   "author": "Urbano Molina",
   "license": "ISC",
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/body-parser": "^1.19.5",
