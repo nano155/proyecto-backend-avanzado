@@ -4,10 +4,12 @@
   "description": "Tienda de ecommerse",
   "main": "index.js",
   "scripts": {
-    "dev": "tsnd --respawn --clear src/app.ts",
-    "clean": "rm -rf ./dist && rm -rf .tsbuildinfo",
-    "build": "tsc",
-    "start": "yarn build && node dist/app.js"
+    "dev": "tsnd --respawn --clear src/index.ts",
+    "start": "nodemon src/index.ts",
+    "build": "rimraf dist && tsc",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Urbano Molina",
   "license": "ISC",
@@ -23,13 +25,15 @@
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/multer": "^1.4.12",
-    "@types/node": "^22.5.2",
+    "@types/node": "^22.5.3",
     "@types/nodemailer": "^6.4.15",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.6",
     "@types/uuid": "^9.0.8",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.4"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -49,5 +53,10 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^10.0.0"
-  }
+  },
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ]
 }
