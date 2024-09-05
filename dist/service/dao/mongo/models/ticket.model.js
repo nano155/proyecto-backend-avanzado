@@ -18,3 +18,4 @@ const ticketSchema = new mongoose_1.default.Schema({
     purchaser: String,
 });
 exports.ticketModel = mongoose_1.default.model("ticket", ticketSchema);
+//# sourceMappingURL=ticket.model.js.map

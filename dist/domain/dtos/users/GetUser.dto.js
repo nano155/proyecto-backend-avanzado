@@ -37,3 +37,4 @@ class GetUserDto {
     }
 }
 exports.GetUserDto = GetUserDto;
+//# sourceMappingURL=GetUser.dto.js.map

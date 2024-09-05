@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -14,14 +23,14 @@ class AuthRequired {
 }
 exports.AuthRequired = AuthRequired;
 _a = AuthRequired;
-AuthRequired.authRequired = async (req, res, next) => {
+AuthRequired.authRequired = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { token } = req.cookies;
         if (!token)
             return res
                 .status(401)
                 .json({ message: "No token, autorization denied!" });
-        const validToken = await config_1.JwtAdapter.validateToken(token);
+        const validToken = yield config_1.JwtAdapter.validateToken(token);
         if (!validToken) {
             return res
                 .status(401)
@@ -33,7 +42,7 @@ AuthRequired.authRequired = async (req, res, next) => {
     catch (error) {
         return res.status(500).send("Internal server error!");
     }
-};
+});
 AuthRequired.mongoIdValidate = (req, res, next) => {
     try {
         const validateId = config_1.Validators.validatorMongoId(req.params.id);
@@ -75,3 +84,4 @@ AuthRequired.uploadCloudinaryMultiple = (folder) => (req, res, next) => {
         next();
     });
 };
+//# sourceMappingURL=auth-required.js.map

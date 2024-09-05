@@ -28,3 +28,4 @@ class ProductEntity {
     }
 }
 exports.ProductEntity = ProductEntity;
+//# sourceMappingURL=product.entity.js.map

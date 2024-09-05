@@ -15,3 +15,4 @@ TicketEntity.fromObject = (ticket) => {
     const { id, code, purchase_datetime, amount, purchaser } = ticket;
     return new TicketEntity(id, code, purchase_datetime, amount, purchaser);
 };
+//# sourceMappingURL=ticket.entity.js.map

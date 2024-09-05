@@ -16,3 +16,4 @@ class SwaggerAdapter {
     }
 }
 exports.SwaggerAdapter = SwaggerAdapter;
+//# sourceMappingURL=swagger-adapter.js.map

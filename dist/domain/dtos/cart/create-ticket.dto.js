@@ -26,3 +26,4 @@ class CreateTicket {
     }
 }
 exports.CreateTicket = CreateTicket;
+//# sourceMappingURL=create-ticket.dto.js.map

@@ -5,7 +5,8 @@ class PaymentStripeController {
     constructor(paymentStripeRepository) {
         this.paymentStripeRepository = paymentStripeRepository;
         this.getPaymentIntent = (req, res) => {
-            const userId = req.user?.payload;
+            var _a;
+            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.payload;
             if (!userId)
                 return res.status(404).json("User ID not found!");
             this.paymentStripeRepository.getPaymentIntent(userId.id)
@@ -13,7 +14,8 @@ class PaymentStripeController {
                 .catch((error) => res.status(400).send(error.message));
         };
         this.CreatePaymentIntent = (req, res) => {
-            const userId = req.user?.payload;
+            var _a;
+            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.payload;
             if (!userId)
                 return res.status(404).json("User ID not found!");
             const id = req.params.id;
@@ -26,7 +28,8 @@ class PaymentStripeController {
                 .catch((error) => res.status(400).send(error.message));
         };
         this.cancelPaymentIntent = (req, res) => {
-            const userId = req.user?.payload;
+            var _a;
+            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.payload;
             if (!userId)
                 return res.status(404).json("User ID not found!");
             this.paymentStripeRepository.cancelPaymentIntent(userId.id)
@@ -34,7 +37,8 @@ class PaymentStripeController {
                 .catch((error) => res.status(400).send(error.message));
         };
         this.completedPayment = (req, res) => {
-            const userId = req.user?.payload;
+            var _a;
+            const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.payload;
             if (!userId)
                 return res.status(404).json("User ID not found!");
             const ticketId = req.params.id;
@@ -47,3 +51,4 @@ class PaymentStripeController {
     }
 }
 exports.PaymentStripeController = PaymentStripeController;
+//# sourceMappingURL=controller.js.map

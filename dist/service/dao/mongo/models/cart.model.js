@@ -33,3 +33,4 @@ cartSchema.pre("findOne", function () {
     this.populate("products.product");
 });
 exports.cartModel = mongoose_1.default.model("carts", cartSchema);
+//# sourceMappingURL=cart.model.js.map

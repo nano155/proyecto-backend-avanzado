@@ -4,3 +4,4 @@ exports.ProductDatasource = void 0;
 class ProductDatasource {
 }
 exports.ProductDatasource = ProductDatasource;
+//# sourceMappingURL=product.datasource.js.map

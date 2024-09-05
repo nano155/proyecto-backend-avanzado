@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CartController = void 0;
 const uuid_1 = require("uuid");
@@ -8,12 +17,12 @@ const dtos_1 = require("../../domain/dtos");
 class CartController {
     constructor(cartRepository) {
         this.cartRepository = cartRepository;
-        this.createCart = async (req, res) => {
+        this.createCart = (req, res) => __awaiter(this, void 0, void 0, function* () {
             this.cartRepository
                 .createCart()
                 .then((cart) => res.json(cart))
                 .catch((error) => res.status(400).send(error.message));
-        };
+        });
         this.getCartById = (req, res) => {
             const id = req.params.id;
             if (!id)
@@ -24,7 +33,8 @@ class CartController {
                 .catch((error) => res.status(400).send(error.message));
         };
         this.addProductToCart = (req, res) => {
-            const cartUser = req.user?.payload;
+            var _a;
+            const cartUser = (_a = req.user) === null || _a === void 0 ? void 0 : _a.payload;
             if (!cartUser)
                 return res.status(401).json({ message: "Unauthorized operation!" });
             const cid = req.params.cid;
@@ -33,7 +43,7 @@ class CartController {
             const pid = req.params.pid;
             if (!pid)
                 return res.status(400).send("Id from product don't received.");
-            if (cartUser?.role === entity_1.Role.user && cartUser.cart === cid) {
+            if ((cartUser === null || cartUser === void 0 ? void 0 : cartUser.role) === entity_1.Role.user && cartUser.cart === cid) {
                 return this.cartRepository
                     .addProductToCart(cid, pid)
                     .then((cart) => res.json(cart))
@@ -76,16 +86,16 @@ class CartController {
                 .then((cart) => res.json(cart))
                 .catch((error) => res.status(400).send(error.message));
         };
-        this.generateTicket = async (req, res) => {
+        this.generateTicket = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { cid } = req.params;
             if (!cid)
                 return res.status(404).json({ error: "Id not found!!" });
-            const user = await user_model_1.userModel.findOne({ cart: cid });
+            const user = yield user_model_1.userModel.findOne({ cart: cid });
             if (!user)
                 return res.status(404).json({ error: "User not found" });
             this.cartRepository
                 .getCartByid(cid)
-                .then(async (cart) => {
+                .then((cart) => __awaiter(this, void 0, void 0, function* () {
                 let totalPrice = 0; // Inicializar el precio total
                 const newCart = cart.products
                     .map((productInfo) => {
@@ -114,10 +124,10 @@ class CartController {
                     .generateTicket(createTicket)
                     .then((ticket) => res.json(ticket))
                     .catch((error) => res.status(400).send(error.message));
-            })
+            }))
                 .catch((error) => res.status(500).json(error));
-        };
-        this.getTicket = async (req, res) => {
+        });
+        this.getTicket = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             if (!id)
                 return res.status(404).json({ error: "Id not found!!" });
@@ -125,7 +135,8 @@ class CartController {
                 .getTicket(id)
                 .then((ticket) => res.json(ticket))
                 .catch((error) => res.status(400).send(error.message));
-        };
+        });
     }
 }
 exports.CartController = CartController;
+//# sourceMappingURL=controller.js.map

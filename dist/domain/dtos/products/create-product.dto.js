@@ -34,3 +34,4 @@ class CreateProductDto {
     }
 }
 exports.CreateProductDto = CreateProductDto;
+//# sourceMappingURL=create-product.dto.js.map

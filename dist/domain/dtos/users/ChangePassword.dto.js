@@ -21,3 +21,4 @@ class ChangePasswordDto {
     }
 }
 exports.ChangePasswordDto = ChangePasswordDto;
+//# sourceMappingURL=ChangePassword.dto.js.map

@@ -32,3 +32,4 @@ class UpdateProductDto {
     }
 }
 exports.UpdateProductDto = UpdateProductDto;
+//# sourceMappingURL=update-products.dto.js.map

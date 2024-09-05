@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -43,12 +52,12 @@ _a = MulterAdapter;
 MulterAdapter.storageCloudinary = (folder) => {
     const storage = new multer_storage_cloudinary_1.CloudinaryStorage({
         cloudinary: cloudinary_config_1.cloudinary,
-        params: async (req, file) => {
+        params: (req, file) => __awaiter(void 0, void 0, void 0, function* () {
             return {
                 folder: folder,
                 resource_type: 'auto'
             };
-        }
+        })
     });
     return storage;
 };
@@ -69,14 +78,14 @@ MulterAdapter.uploader = (folder) => {
     });
     return uploader;
 };
-MulterAdapter.delete = async (publicId) => {
+MulterAdapter.delete = (publicId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (typeof publicId === "string") {
-            const result = await cloudinary_config_1.cloudinary.uploader.destroy(publicId);
+            const result = yield cloudinary_config_1.cloudinary.uploader.destroy(publicId);
             console.log(result);
         }
         else {
-            const results = await Promise.all(publicId.map((id) => cloudinary_config_1.cloudinary.uploader.destroy(id)));
+            const results = yield Promise.all(publicId.map((id) => cloudinary_config_1.cloudinary.uploader.destroy(id)));
             console.log(results);
         }
     }
@@ -84,5 +93,6 @@ MulterAdapter.delete = async (publicId) => {
         console.error("Error al eliminar el archivo:", error);
         throw error;
     }
-};
+});
 MulterAdapter.update = () => { };
+//# sourceMappingURL=multer-adapter.js.map

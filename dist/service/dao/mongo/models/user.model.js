@@ -65,3 +65,4 @@ userSchema.pre('findOne', function () {
     this.populate("cart");
 });
 exports.userModel = mongoose_1.default.model('users', userSchema);
+//# sourceMappingURL=user.model.js.map

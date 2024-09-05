@@ -48,3 +48,4 @@ class ProductRoutes {
     }
 }
 exports.ProductRoutes = ProductRoutes;
+//# sourceMappingURL=routes.js.map

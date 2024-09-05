@@ -18,3 +18,4 @@ __exportStar(require("./product.entity"), exports);
 __exportStar(require("./user.entity"), exports);
 __exportStar(require("./cart.entity"), exports);
 __exportStar(require("./ticket.entity"), exports);
+//# sourceMappingURL=index.js.map

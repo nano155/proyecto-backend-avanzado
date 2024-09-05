@@ -59,3 +59,4 @@ exports.productSchema.set('toJSON', {
     },
 });
 exports.productModel = mongoose_1.default.model('products', exports.productSchema);
+//# sourceMappingURL=product.model.js.map

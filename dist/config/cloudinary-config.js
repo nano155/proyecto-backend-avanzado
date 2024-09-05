@@ -9,3 +9,4 @@ cloudinary_1.v2.config({
     api_key: envs_1.envs.CLOUDINARY_API_KEY,
     api_secret: envs_1.envs.CLOUDINARY_API_SECRET
 });
+//# sourceMappingURL=cloudinary-config.js.map

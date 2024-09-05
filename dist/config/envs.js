@@ -20,3 +20,4 @@ exports.envs = {
     STRIPE_APP_SECRET_KEY: (0, env_var_1.get)("STRIPE_APP_SECRET_KEY").required().asString(),
     URL: (0, env_var_1.get)("URL").required().asString()
 };
+//# sourceMappingURL=envs.js.map

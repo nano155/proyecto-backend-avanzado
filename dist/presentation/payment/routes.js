@@ -20,3 +20,4 @@ class PaymentsRoutes {
     }
 }
 exports.PaymentsRoutes = PaymentsRoutes;
+//# sourceMappingURL=routes.js.map

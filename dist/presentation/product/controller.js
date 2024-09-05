@@ -1,4 +1,15 @@
 "use strict";
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductController = void 0;
 const entity_1 = require("../../domain/entity");
@@ -7,8 +18,9 @@ class ProductController {
     constructor(productRepository) {
         this.productRepository = productRepository;
         this.createProduct = (req, res) => {
-            const userAuthorized = req.user?.payload;
-            if (userAuthorized?.role !== entity_1.Role.admin && userAuthorized?.role !== entity_1.Role.premium)
+            var _a;
+            const userAuthorized = (_a = req.user) === null || _a === void 0 ? void 0 : _a.payload;
+            if ((userAuthorized === null || userAuthorized === void 0 ? void 0 : userAuthorized.role) !== entity_1.Role.admin && (userAuthorized === null || userAuthorized === void 0 ? void 0 : userAuthorized.role) !== entity_1.Role.premium)
                 return res.status(401).json({ message: "Unauthorized operation" });
             const thumb = [];
             if (req.file !== undefined) {
@@ -23,12 +35,9 @@ class ProductController {
                 ? req.body.status
                 : req.body.status === 'true';
             const stockP = +req.body.stock;
-            const { price, status, stock, ...rest } = req.body;
+            const _b = req.body, { price, status, stock } = _b, rest = __rest(_b, ["price", "status", "stock"]);
             console.log(statusB);
-            const [error, createDto] = dtos_1.CreateProductDto.create({
-                owner: userAuthorized.role === 'premium' ? userAuthorized?.id : null, price: precio, status: statusB, stock: stockP,
-                ...rest
-            });
+            const [error, createDto] = dtos_1.CreateProductDto.create(Object.assign({ owner: userAuthorized.role === 'premium' ? userAuthorized === null || userAuthorized === void 0 ? void 0 : userAuthorized.id : null, price: precio, status: statusB, stock: stockP }, rest));
             if (error)
                 return res.status(400).json({ error: error });
             this.productRepository
@@ -76,8 +85,9 @@ class ProductController {
                 .catch((error) => res.status(400).json({ error: error.message }));
         };
         this.deleteProductById = (req, res) => {
-            const userAuthorized = req.user?.payload;
-            if (userAuthorized?.role !== entity_1.Role.admin && userAuthorized?.role !== entity_1.Role.premium)
+            var _a;
+            const userAuthorized = (_a = req.user) === null || _a === void 0 ? void 0 : _a.payload;
+            if ((userAuthorized === null || userAuthorized === void 0 ? void 0 : userAuthorized.role) !== entity_1.Role.admin && (userAuthorized === null || userAuthorized === void 0 ? void 0 : userAuthorized.role) !== entity_1.Role.premium)
                 return res.status(401).json({ message: "Unauthorized operation" });
             const id = req.params.id;
             if (!id)
@@ -88,12 +98,13 @@ class ProductController {
                 .catch((error) => res.status(400).json({ error: error.message }));
         };
         this.updateProductById = (req, res) => {
-            const userAuthorized = req.user?.payload;
-            if (userAuthorized?.role !== entity_1.Role.admin && userAuthorized?.role !== entity_1.Role.premium)
+            var _a;
+            const userAuthorized = (_a = req.user) === null || _a === void 0 ? void 0 : _a.payload;
+            if ((userAuthorized === null || userAuthorized === void 0 ? void 0 : userAuthorized.role) !== entity_1.Role.admin && (userAuthorized === null || userAuthorized === void 0 ? void 0 : userAuthorized.role) !== entity_1.Role.premium)
                 return res.status(401).json({ message: "Unauthorized operation" });
             console.log(req.body);
-            const { stock, price, ...rest } = req.body;
-            const [error, updateProduct] = dtos_1.UpdateProductDto.create({ stock: +stock, price: +price, ...rest });
+            const _b = req.body, { stock, price } = _b, rest = __rest(_b, ["stock", "price"]);
+            const [error, updateProduct] = dtos_1.UpdateProductDto.create(Object.assign({ stock: +stock, price: +price }, rest));
             if (error)
                 return res.status(400).json({ error: error });
             const id = req.params.id;
@@ -107,3 +118,4 @@ class ProductController {
     }
 }
 exports.ProductController = ProductController;
+//# sourceMappingURL=controller.js.map
